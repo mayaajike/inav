@@ -1,0 +1,12 @@
+.welcome {
+    margin-left: 50px;
+    margin-top: 20px; 
+}
+
+.cards {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-left: 40px;
+}

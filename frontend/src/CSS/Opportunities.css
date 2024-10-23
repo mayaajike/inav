@@ -1,0 +1,17 @@
+.headers {
+    margin-left: 50px;
+    margin-top: 20px; 
+}
+
+.cards-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-left: 25px;
+}
+
+.cards-group::-webkit-scrollbar {
+    display: none;
+  }
