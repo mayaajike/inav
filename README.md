@@ -4,4 +4,5 @@ iNav is a web application platform where international students in the United St
 Main proposal: https://docs.google.com/document/d/1q2Snnu7AsE0wUtFq34BLoTTLNVy28XGu3BG2fU4pzxU/edit?usp=sharing
 
 command to run frontend: npm run dev
+
 command to run backend: node index.js
