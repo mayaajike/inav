@@ -37,11 +37,9 @@ export default function Home() {
                 <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
                 <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
                 <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
-                <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
             </div>
             <h3 className='welcome'>Continue working on...</h3>
             <div className='cards'>
-                <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
                 <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
                 <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
                 <Card image="placeholder.js" text="random text" title="random title"/> <Card image="placeholder.js" text="random text" title="random title"/> 
