@@ -8,6 +8,7 @@ const prisma = new PrismaClient()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const rapidapiSdk = require('rapidapi-sdk')
 app.use(express.json())
 const corsOptions = {
     origin: "http://localhost:5173",
@@ -215,6 +216,73 @@ app.post('/login', async (req, res) => {
     }
 })
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`)
+const intUrl = 'https://rapid-linkedin-jobs-api.p.rapidapi.com/search-jobs?keywords=intern&locationId=103644278&datePosted=anyTime&jobType=internship%2C%20partTime&experienceLevel=internship%2C%20entryLevel&onsiteRemote=onSite%2C%20remote%2C%20hybrid&sort=mostRelevant';
+const scholUrl = 'https://rapid-linkedin-jobs-api.p.rapidapi.com/search-jobs?keywords=intern&locationId=103644278&datePosted=anyTime&jobType=internship%2C%20partTime&experienceLevel=internship%2C%20entryLevel&start=30&onsiteRemote=onSite%2C%20remote%2C%20hybrid&sort=mostRelevant';
+const fellUrl = 'https://rapid-linkedin-jobs-api.p.rapidapi.com/search-jobs?keywords=intern&locationId=103644278&datePosted=anyTime&jobType=internship%2C%20partTime&experienceLevel=internship%2C%20entryLevel&start=60&onsiteRemote=onSite%2C%20remote%2C%20hybrid&sort=mostRelevant';
+const options = {
+    method: 'GET',
+    headers: {
+        'x-rapidapi-key': '21ed57571fmshfdb96a8f0e8abccp1a9dabjsnd57057928769',
+        'x-rapidapi-host': 'rapid-linkedin-jobs-api.p.rapidapi.com'
+    }
+};
+
+async function fetchData(url) {
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        result.data.forEach(async (item) => {
+            const opportunity = {
+                id: item.id,
+                title: item.title,
+                companyName: item.company.name,
+                companyLogo: item.company.logo,
+                jobPosting: item.url,
+                jobType: item.type,
+                location: item.location,
+            }
+
+            await prisma.opportunity.create({
+                data: opportunity,
+            });
+        });
+        
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// import('express-cron').then(({ default: expressCron }) => {
+//     // Use expressCron here
+//     expressCron(app, '0 0 * * *', async () => {
+//       await fetchData(intUrl);
+//       await fetchData(scholUrl);
+//       await fetchData(fellUrl);
+//     });
+//   });
+app.get('/save-data', async (req, res) => {
+    try {
+        await fetchData(intUrl);
+        await fetchData(scholUrl);
+        await fetchData(fellUrl);
+        const allOpportunities = await prisma.opportunity.findMany();
+        res.status(200).json(allOpportunities);
+    } catch (error) {
+        res.status(500).json({ error: "API error." });
+    }
+    
+})
+
+app.get('/opportunities', async (req, res) => {
+    try{
+        const opportunities = await prisma.opportunity.findMany();
+        res.status(200).json(opportunities);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch all opportunities." });
+    }
+})
+
+app.listen(PORT, async () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 })

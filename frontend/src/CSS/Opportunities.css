@@ -3,13 +3,21 @@
     margin-top: 20px; 
 }
 
-.cards-group {
+/* .cards-group {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     flex-wrap: nowrap;
     overflow-x: auto;
     margin-left: 25px;
+} */
+
+
+.cards-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust minmax values for card size */
+    gap: 20px; /* Space between the cards */
+    padding: 20px; /* Optional: Add padding to the container */
 }
 
 .cards-group::-webkit-scrollbar {

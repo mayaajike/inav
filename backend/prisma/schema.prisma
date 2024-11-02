@@ -30,3 +30,13 @@ model User {
   isVerified        Boolean    @default(false)
   emailToken        String?
 }
+
+model Opportunity{
+  id          String    @id @default(uuid())
+  title       String
+  companyName String
+  companyLogo String
+  jobPosting  String
+  jobType     String
+  location    String
+}
