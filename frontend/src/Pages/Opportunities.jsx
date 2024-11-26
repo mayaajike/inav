@@ -8,7 +8,7 @@ export default function Opportunities() {
     const [scholData, setScholData] = useState(null);
     const [fellData, setFellData] = useState(null);
     const [error, setError] = useState(null);
-    const hasRunRef = useRef(false)
+    const hasRunRef = useRef(false);
     const [data, setData] = useState(null);
     
     const intUrl = 'https://rapid-linkedin-jobs-api.p.rapidapi.com/search-jobs?keywords=intern&locationId=103644278&datePosted=anyTime&jobType=internship%2C%20partTime&experienceLevel=internship%2C%20entryLevel&onsiteRemote=onSite%2C%20remote%2C%20hybrid&sort=mostRelevant';
@@ -94,7 +94,8 @@ export default function Opportunities() {
                         image={item.companyLogo}
                         text={item.companyName}
                         title={item.title} 
-                        link={item.jobPosting}/>
+                        link={item.jobPosting}
+                        oppId={item.id}/>
                 ))} 
             </div>
         </div>

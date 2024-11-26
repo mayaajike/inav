@@ -2,3 +2,12 @@
     border: 2px solid black;
     margin: 20px;
 }
+
+.save-button {
+    margin-left: 90px;
+    font-size: 17px;
+}
+
+.actions {
+    justify-content: space-between;
+}

@@ -14,21 +14,22 @@ datasource db {
 }
 
 model User {
-  id                String     @id @default(uuid())
-  firstName         String
-  lastName          String
-  username          String     @unique
-  password          String      
-  email             String     @unique
-  profilePic        String?
-  resume            String?
-  gradDate          DateTime?
-  classification    String?
-  major             String?
-  accessToken       String
-  refreshToken      String
-  isVerified        Boolean    @default(false)
-  emailToken        String?
+  id                  String     @id @default(uuid())
+  firstName           String
+  lastName            String
+  username            String     @unique
+  password            String      
+  email               String     @unique
+  profilePic          String?
+  resume              String?
+  gradDate            DateTime?
+  classification      String?
+  major               String?
+  accessToken         String
+  refreshToken        String
+  isVerified          Boolean    @default(false)
+  emailToken          String?
+  SavedOpportunities  SavedOpportunity[]
 }
 
 model Opportunity{
@@ -39,4 +40,14 @@ model Opportunity{
   jobPosting  String
   jobType     String
   location    String
+  savedBy     SavedOpportunity[]
+}
+
+model SavedOpportunity {
+  id          String      @id @default(uuid())
+  oppId       String
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity Opportunity  @relation(fields: [oppId], references: [id], onDelete: Cascade)
+  savedAt     DateTime      @default(now())        
 }

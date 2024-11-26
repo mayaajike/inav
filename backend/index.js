@@ -127,6 +127,16 @@ async function verifyEmail(req, res) {
     }
 }
 
+
+async function findOpportunity(oppId) {
+    const opportunity = await prisma.opportunity.findFirst({
+        where: {
+            id: oppId,
+        },
+    });
+    return opportunity;
+}
+
 app.get('/', authenticateToken, async (req, res) => {
     res.json(req.user);
 })
@@ -253,14 +263,6 @@ async function fetchData(url) {
     }
 }
 
-// import('express-cron').then(({ default: expressCron }) => {
-//     // Use expressCron here
-//     expressCron(app, '0 0 * * *', async () => {
-//       await fetchData(intUrl);
-//       await fetchData(scholUrl);
-//       await fetchData(fellUrl);
-//     });
-//   });
 app.get('/save-data', async (req, res) => {
     try {
         await fetchData(intUrl);
@@ -280,6 +282,98 @@ app.get('/opportunities', async (req, res) => {
         res.status(200).json(opportunities);
     } catch (error) {
         res.status(500).json({ error: "Failed to fetch all opportunities." });
+    }
+})
+
+app.get('/saved-opportunity', async (req, res) => {
+    const { oppId, username } = req.query;
+    try {
+        const existingUser = await findUser(username);
+        if (!existingUser) {
+            return res.status(404).json({error: "User does not exist"});
+        }
+        const opportunity = await findOpportunity(oppId);
+        if (!opportunity) {
+            return res.status(404).json({error: "Opportunity does not exist"});
+        }
+        const saved = await prisma.savedOpportunity.findFirst({
+            where: {
+                oppId: opportunity.id
+            }
+        });
+        if (!saved) {
+            return res.status(404).json({ error: "Opportunity has not been saved." });
+        }
+
+        return res.status(200).json({
+            message: "Opportunity has been saved.",
+            saved: saved,
+        })
+    } catch(error) {
+        return
+    }
+})
+
+app.post('/save-opportunity', async (req, res) => {
+    const { oppId, username } = req.body;
+    try {
+        const existingUser = await findUser(username);
+        if (!existingUser) {
+            return res.status(404).json({error: "User does not exist"});
+        }
+        const opportunity = await findOpportunity(oppId);
+        if (!opportunity) {
+            return res.status(404).json({error: "Opportunity does not exist"});
+        }
+
+        const saved = await prisma.savedOpportunity.create({
+            data: {
+                userId: existingUser.id,
+                oppId: opportunity.id,
+            },
+        });
+
+        return res.status(200).json({
+            message: "Opportunity saved successfully",
+            saved: saved,
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Server error" });
+    }
+})
+
+app.post('/unsave-opportunity', async (req, res) => {
+    const { oppId, username } = req.body;
+    try {
+        const existingUser = await findUser(username);
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist." });
+        }
+        const opportunity = await findOpportunity(oppId);
+        if (!opportunity) {
+            return res.status(404).json({ error: "Opportunity does not exist." });
+        }
+        const savedOpportunity = await prisma.savedOpportunity.findFirst({
+            where: {
+                userId: existingUser.id,
+                oppId: opportunity.id
+            }
+        });
+        if (!savedOpportunity) {
+            return res.status(404).json({ error: "Opportunity has not been saved." });
+        }
+        const unsaved = await prisma.savedOpportunity.delete({
+            where: {
+                id: savedOpportunity.id
+            }
+        });
+
+        return res.status(200).json({
+            message: "Opportunity unsaved successfully",
+            unsaved: unsaved,
+        })
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' });
     }
 })
 
