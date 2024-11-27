@@ -14,7 +14,6 @@ export default function Opportunities() {
         if (!hasRunRef.current) {
             hasRunRef.current = true;
             fetchData();
-            
         }
     }, [])
 

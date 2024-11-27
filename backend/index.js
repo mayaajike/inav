@@ -285,6 +285,28 @@ app.get('/opportunities', async (req, res) => {
     }
 })
 
+// get all saved opportunities
+app.get('/saved-opportunities', async (req, res) => {
+    const { username } = req.query;
+    try {
+        const existingUser = await findUser(username);
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist" });
+        }
+
+        const savedOpps = await prisma.savedOpportunity.findMany({
+            where: {
+                userId: existingUser.id,
+            }
+        });
+
+        res.status(200).json(savedOpps);
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch user's saved opportunities." });
+    }
+})
+
+//check if an opportunity is saved 
 app.get('/saved-opportunity', async (req, res) => {
     const { oppId, username } = req.query;
     try {
@@ -314,6 +336,7 @@ app.get('/saved-opportunity', async (req, res) => {
     }
 })
 
+// save an opportunity
 app.post('/save-opportunity', async (req, res) => {
     const { oppId, username } = req.body;
     try {
@@ -342,6 +365,7 @@ app.post('/save-opportunity', async (req, res) => {
     }
 })
 
+// unsave an opportunity
 app.post('/unsave-opportunity', async (req, res) => {
     const { oppId, username } = req.body;
     try {
