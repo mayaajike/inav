@@ -30,7 +30,7 @@ export default function AppCard({ image, title, text, link, oppId }) {
                 setSaved(true)
             }
         } catch(error) {
-            console.error(error);
+            null
         }
     }
     const saveOpp = async () => {
