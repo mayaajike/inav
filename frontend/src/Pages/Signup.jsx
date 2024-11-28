@@ -93,7 +93,7 @@ export default function Signup() {
                             }}
                         />
                     </div>
-                    <button type="submit">Sign Up</button>
+                    <button type="submit" style={{backgroundColor: 'purple'}}>Sign Up</button>
                     <p> Already have an account? <Link to="/login">Login</Link> </p>
                 </form>
             </div>

@@ -43,7 +43,6 @@ export default function AppCard({ image, title, text, link, oppId }) {
                 body: JSON.stringify({ oppId, username }),
             });
             if (response.ok) {
-                const data = await response.json();
                 setSaved(true);
             }
         } catch (error) {
@@ -61,7 +60,6 @@ export default function AppCard({ image, title, text, link, oppId }) {
                 body: JSON.stringify({ oppId, username }),
             });
             if (response.ok) {
-                const data = await response.json();
                 setSaved(false);
             }
         } catch(error) {
@@ -77,9 +75,9 @@ export default function AppCard({ image, title, text, link, oppId }) {
                     <Card.Text>{text}</Card.Text>
                     <div className="actions">
                         <Link to={link} target='_blank' rel='noopener noreferrer'>
-                            <Button variant="primary">Apply</Button>
+                            <Button style={{ backgroundColor: 'purple', color: 'white' }}>Apply</Button>
                         </Link>
-                        <Button className="save-button" variant={saved ? 'success' : 'primary'} onClick={saved ? unsaveOpp : saveOpp}>{saved ? 'Saved' : 'Save'}</Button>
+                        <Button className="save-button" style={{backgroundColor: saved ? '#9B6BCC' : 'purple'}} onClick={saved ? unsaveOpp : saveOpp}>{saved ? 'Saved' : 'Save'}</Button>
                     </div>
                 </Card.Body>
             </Card>

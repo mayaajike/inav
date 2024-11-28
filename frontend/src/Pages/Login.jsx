@@ -62,7 +62,7 @@ export default function Login() {
                 required
             />
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" style={{backgroundColor: 'purple'}}>Login</button>
             <p>
             New Here? <Link to="/signup">Sign Up</Link>
             </p>

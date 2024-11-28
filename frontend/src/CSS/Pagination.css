@@ -22,13 +22,13 @@
 }
 
 .pagination button:hover {
-    background-color: black;
+    background-color: #9B6BCC;
     color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .pagination button.active {
-    background-color: black;
+    background-color: #9B6BCC;
     color: #fff;
     border: 2px solid purple;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
