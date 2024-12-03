@@ -7,6 +7,7 @@ import Opportunities from './Pages/Opportunities';
 import Applications from './Pages/Applications';
 import Login from './Pages/Login';
 import Signup from './Pages/Signup';
+import Profile from './Pages/Profile';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -27,6 +28,7 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/opportunities' element={<Opportunities />} />
             <Route path='/applications' element={<Applications />} />
+            <Route path='/profile' element={<Profile />} />
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>

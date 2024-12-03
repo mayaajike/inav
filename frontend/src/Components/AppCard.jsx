@@ -33,6 +33,7 @@ export default function AppCard({ image, title, text, link, oppId }) {
             null
         }
     }
+    
     const saveOpp = async () => {
         try {
             const response = await fetch('http://localhost:3000/save-opportunity', {
@@ -45,8 +46,11 @@ export default function AppCard({ image, title, text, link, oppId }) {
             if (response.ok) {
                 setSaved(true);
             }
+            if (response.status === 404){
+                return;
+            }
         } catch (error) {
-            null
+            return;
         }
     }
 
@@ -68,7 +72,10 @@ export default function AppCard({ image, title, text, link, oppId }) {
     }
     return(
         <div>
-            <Card className="card" style={{ width: '100%', marginBottom: '20px' }}>
+            <Card className="card" style={{ width: '100%', marginBottom: '20px' }} onClick={() => {
+                console.log(oppId);
+                console.log(saved)
+            }}>
                 <Card.Img variant="top" src={image} style={{ width: "100%", height: "150px", objectFit: "cover" }}/>
                 <Card.Body>
                     <Card.Title>{title}</Card.Title>

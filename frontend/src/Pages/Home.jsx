@@ -4,6 +4,7 @@ import "../CSS/Home.css"
 import Card from '../Components/AppCard'
 
 export default function Home() {
+    const user = JSON.parse(localStorage.getItem("user"))
     const [username, setUsername] = useState("");
     const [data, setData] = useState([]);
     const hasRunRef = useRef(false);
@@ -77,7 +78,7 @@ export default function Home() {
     return (
         <div>
             <NavBar />
-            <h2 className='welcome'>Hey {username}, Welcome Back!</h2>
+            <h2 className='welcome'>Hey {user.username}, Welcome Back!</h2>
             <h3 className='welcome'>Here's what you missed...</h3>
             <div className='cards' style={{ display: 'flex', flexWrap: 'nowrap', gap: '10px', justifyContent: 'flex-start', width: '100%', overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {opps.slice(0, 6) && opps.slice(0, 6).map((item, index) => (

@@ -33,7 +33,7 @@ export default function NavBar() {
           </Nav>
           <Nav className="ms-auto">
               <NavDropdown title={<FaRegUser style={{ width: '25px', height: '25px '}} />} id="user-nav-dropdown">
-                  <NavDropdown.Item href="#profile">Profile</NavDropdown.Item>
+                  <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                   <NavDropdown.Item href="#settings">Settings</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='/login' onClick={handleLogout}>Logout</NavDropdown.Item>

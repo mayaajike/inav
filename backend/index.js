@@ -9,6 +9,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const rapidapiSdk = require('rapidapi-sdk')
+const multer = require('multer')
+const path = require('path')
 app.use(express.json())
 const corsOptions = {
     origin: "http://localhost:5173",
@@ -316,7 +318,7 @@ app.get('/saved-opportunity', async (req, res) => {
         }
         const opportunity = await findOpportunity(oppId);
         if (!opportunity) {
-            return res.status(404).json({error: "Opportunity does not exist"});
+            return;
         }
         const saved = await prisma.savedOpportunity.findFirst({
             where: {
@@ -324,7 +326,7 @@ app.get('/saved-opportunity', async (req, res) => {
             }
         });
         if (!saved) {
-            return res.status(404).json({ error: "Opportunity has not been saved." });
+            return;
         }
 
         return res.status(200).json({
@@ -398,6 +400,73 @@ app.post('/unsave-opportunity', async (req, res) => {
         })
     } catch (error) {
         res.status(500).json({ error: 'Server error' });
+    }
+})
+
+// get user info
+app.get('/user-info', async (req, res) => {
+    const { username } = req.query;
+    try {
+        const existingUser = await findUser(username);
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist." });
+        }
+        return res.status(200).json(existingUser);
+    } catch (error) {
+        return res.status(500).json({ error: "Server error." });
+    }
+})
+
+//multer to store files 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024}, //max file size 5MB
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png', 'application/pdf'];
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error('Unsupported file type'), false);
+        }
+        cb(null, true)
+    }
+});
+
+// update user info
+app.patch('/user-info', upload.fields([{ name: 'profilePic'}, { name: 'resume' }]), async (req, res) => {
+    const { firstName, lastName, username, email, gradDate, classification, major } = req.body;
+    const profilePic = req.files.profilePic ? req.files.profilePic[0] : null;
+    const resume = req.files.resume ? req.files.resume[0] : null;
+    try {
+        const existingUser = await findUser(username);
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist" });
+        }
+        const formattedGradDate = gradDate ? new Date(gradDate) : null;
+        const updatedUser = await prisma.user.update({
+            where: {
+                id: existingUser.id,
+            },
+            data: {
+                firstName: firstName || existingUser.firstName,
+                lastName: lastName || existingUser.lastName,
+                email: email || existingUser.email,
+                profilePic: profilePic ? profilePic.path : existingUser.profilePic,
+                resume: resume ? resume.path : existingUser.resume,
+                gradDate: formattedGradDate || existingUser.gradDate,
+                classification: classification || existingUser.classification,
+                major: major || existingUser.major
+            },
+        });
+        return res.status(200).json(updatedUser);
+    } catch (error) {
+        return res.status(500).json({ error: "Server error" });
     }
 })
 
