@@ -8,14 +8,20 @@ export default function Pagination({ oppsPerPage, totalOpps, paginate, currentPa
         pageNumbers.push(i);
     }
 
+    const scrollToTop = () => {
+        window.scrollTo(0, 0);
+    }
+
     const toPrevPage  = () => {
         paginate(currentPage - 1);
         setCurrentPage(currentPage - 1);
+        scrollToTop();
     }
 
     const toNextPage = () => {
         paginate(currentPage + 1);
         setCurrentPage(currentPage + 1);
+        scrollToTop();
     }
 
     return (
