@@ -42,7 +42,8 @@ export default function Opportunities() {
     const currentPosts = data.slice(indexOfFirstPost, indexOfLastPost);
 
     const paginate = (pageNumber) => {
-        setCurrentPage(pageNumber)
+        setCurrentPage(pageNumber);
+        window.scrollTo(0, 0);
     }
 
     return (

@@ -33,7 +33,7 @@ export default function AppCard({ image, title, text, link, oppId }) {
             null
         }
     }
-    
+
     const saveOpp = async () => {
         try {
             const response = await fetch('http://localhost:3000/save-opportunity', {
@@ -41,16 +41,16 @@ export default function AppCard({ image, title, text, link, oppId }) {
                 headers: {
                     "Content-Type": 'application/json',
                 },
-                body: JSON.stringify({ oppId, username }),
+                body: JSON.stringify({ oppId: oppId, username: username }),
             });
             if (response.ok) {
+                const data = await response.json();
                 setSaved(true);
-            }
-            if (response.status === 404){
-                return;
+            } else {
+                console.error("Error saving opportunity", response.statusText);
             }
         } catch (error) {
-            return;
+            console.error("Unable to save opp", error);
         }
     }
 
@@ -64,18 +64,16 @@ export default function AppCard({ image, title, text, link, oppId }) {
                 body: JSON.stringify({ oppId, username }),
             });
             if (response.ok) {
+                const data = await response.json();
                 setSaved(false);
             }
         } catch(error) {
-            console.error(error);
+            console.error("Unable to unsave opp", error);
         }
     }
     return(
         <div>
-            <Card className="card" style={{ width: '100%', marginBottom: '20px' }} onClick={() => {
-                console.log(oppId);
-                console.log(saved)
-            }}>
+            <Card className="card" style={{ width: '100%', marginBottom: '20px' }}>
                 <Card.Img variant="top" src={image} style={{ width: "100%", height: "150px", objectFit: "cover" }}/>
                 <Card.Body>
                     <Card.Title>{title}</Card.Title>
@@ -84,10 +82,11 @@ export default function AppCard({ image, title, text, link, oppId }) {
                         <Link to={link} target='_blank' rel='noopener noreferrer'>
                             <Button style={{ backgroundColor: 'purple', color: 'white' }}>Apply</Button>
                         </Link>
-                        <Button className="save-button" style={{backgroundColor: saved ? '#9B6BCC' : 'purple'}} onClick={saved ? unsaveOpp : saveOpp}>{saved ? 'Saved' : 'Save'}</Button>
+                        <Button className="save-button" style={{backgroundColor: saved ? '#9B6BCC' : 'purple'}} onClick={saved ? unsaveOpp : saveOpp }>{saved ? 'Saved' : 'Save'}</Button>
                     </div>
                 </Card.Body>
             </Card>
         </div>
     )
 }
+
