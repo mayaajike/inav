@@ -79,13 +79,30 @@ export default function AppCard({ image, title, text, link, oppId }) {
         }
     }
 
-    const handleApplyClick = ()=> {
-        localStorage.setItem('returnFromApply', 'true');
-        window.open(link, '_blank');
-    }
+    const handleApplyClick = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/apply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    oppId: oppId,
+                    username: username,
+                }),
+            });
+            if (response.ok) {
+                localStorage.setItem('returnFromApply', 'true'); 
+                window.open(link, '_blank');
+            } else {
+                console.error('Error applying for opportunity');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     const handlePopupSubmit = async (completed) => {
-        console.log(username);
         setShowPopup(false);
         try {
             const response = await fetch('http://localhost:3000/application-status', {
@@ -99,9 +116,7 @@ export default function AppCard({ image, title, text, link, oppId }) {
                     completed: completed,
                 }),
             });
-            console.log(response);
             if (response.ok) {
-                
                 alert('Your application status has been updated.');
             } else {
                 console.error('Error updating application status');
@@ -109,7 +124,8 @@ export default function AppCard({ image, title, text, link, oppId }) {
         } catch (error) {
             console.error('Error:', error);
         }
-    }
+    };
+
     return(
         <div>
             <Card className="card" style={{ width: '100%', marginBottom: '20px' }}>

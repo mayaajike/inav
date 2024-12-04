@@ -9,6 +9,8 @@ import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Profile from './Pages/Profile';
 import SavedOpps from './Pages/SavedOpps';
+import Completed from './Pages/Completed';
+import InProgress from './Pages/InProgress';
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -31,6 +33,8 @@ function App() {
             <Route path='/applications' element={<Applications />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/saved' element={<SavedOpps />} />
+            <Route path='/completed' element={<Completed />} />
+            <Route path='/in-progress' element={<InProgress />} />
           </Routes>
         </BrowserRouter>
       </UserContext.Provider>

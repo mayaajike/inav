@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '../CSS/NavBar.css'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
@@ -8,8 +8,15 @@ import logo from '../assets/inav logo.png'
 import { FaRegUser } from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
 
-export default function NavBar() {
+export default function NavBar({ onSearch }) {
   const location = useLocation();
+  const [searchQuery, setSearchQuery] = useState('')
+  
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    onSearch(e.target.value);
+  }
+  
   const handleLogout = () => {
     localStorage.clear();
   }
@@ -28,12 +35,17 @@ export default function NavBar() {
             <Nav.Link href="/opportunities" className={isActive("/opportunities") ? 'active' : ''}>Opportunities</Nav.Link>
             <NavDropdown title="Application Hub" id="basic-nav-dropdown">
             <NavDropdown.Item href="/saved" className={isActive("/saved") ? 'active' : ''}>Saved</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2" className={isActive("#action/3.2") ? 'active' : ''}>Completed</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3" className={isActive("#action/3.3") ? 'active' : ''}>In Progress</NavDropdown.Item>
+              <NavDropdown.Item href="/completed" className={isActive("#action/3.2") ? 'active' : ''}>Completed</NavDropdown.Item>
+              <NavDropdown.Item href="/in-progress" className={isActive("#action/3.3") ? 'active' : ''}>In Progress</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="/applications" className={isActive("/applications") ? 'active' : ''}>All Applications</NavDropdown.Item>
             </NavDropdown>
           </Nav>
+          {location.pathname=== '/opportunities' && (
+            <Nav className='ms-auto'>
+              <input type="text" placeholder='Search Opportunities' value={searchQuery} onChange={handleSearchChange} className='search-bar'/>
+            </Nav>
+          )}
           <Nav className="ms-auto">
               <NavDropdown title={<FaRegUser style={{ width: '25px', height: '25px '}} />} id="user-nav-dropdown">
                   <NavDropdown.Item href="/profile" className={isActive("/profile") ? 'active' : ''}>Profile</NavDropdown.Item>

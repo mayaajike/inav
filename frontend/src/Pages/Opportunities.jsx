@@ -9,6 +9,8 @@ export default function Opportunities() {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [oppsPerPage, setOppsPerPage] = useState(20);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
 
     useEffect(() => {
         if (!hasRunRef.current) {
@@ -30,6 +32,7 @@ export default function Opportunities() {
             if (response.ok) {
                 const data = await response.json()
                 setData(data);
+                setFilteredData(data);
             }
             
         } catch (error) {
@@ -37,18 +40,36 @@ export default function Opportunities() {
         }
     }
 
+    //filter based on search query
+    useEffect(() => {
+        if (searchQuery === '') {
+          setFilteredData(data);
+        } else {
+          const filtered = data.filter(item =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.location.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          setFilteredData(filtered);
+        }
+      }, [searchQuery, data]); 
+
     const indexOfLastPost = currentPage * oppsPerPage;
     const indexOfFirstPost = indexOfLastPost - oppsPerPage;
-    const currentPosts = data.slice(indexOfFirstPost, indexOfLastPost);
+    const currentPosts = filteredData.slice(indexOfFirstPost, indexOfLastPost);
 
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
         window.scrollTo(0, 0);
     }
 
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+      };
+
     return (
         <div>
-            <NavBar />
+            <NavBar onSearch={handleSearch}/>
             <div className='cards-group'>
                 {/* map through the internship data and render AppCard components */}
                 {currentPosts && currentPosts.map((item, index) => (
@@ -56,7 +77,7 @@ export default function Opportunities() {
                 ))} 
             </div>
 
-            {data && (
+            {filteredData && (
                 <Pagination oppsPerPage={oppsPerPage} totalOpps={data.length} paginate={paginate} currentPage = {currentPage} setCurrentPage={setCurrentPage} />
             )}
         </div>

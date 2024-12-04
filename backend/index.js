@@ -474,12 +474,14 @@ app.patch('/user-info', upload.fields([{ name: 'profilePic'}, { name: 'resume' }
 })
 
 app.post('/apply', async (req, res) => {
-    const { oppId, username, completed } = req.body;
+    const { oppId, username } = req.body;
+
     try {
         const existingUser = await findUser(username);
         if (!existingUser) {
             return res.status(404).json({ error: "User does not exist" });
         }
+
         const opportunity = await findOpportunity(oppId);
         if (!opportunity) {
             return res.status(404).json({ error: "Opportunity does not exist." });
@@ -493,34 +495,25 @@ app.post('/apply', async (req, res) => {
         });
 
         if (existingApplication) {
-            if (completed === true) {
-                const updatedApplication = await prisma.application.update({
-                    where: {
-                        id: existingApplication.id,
-                    },
-                    data: {
-                        completed: true,
-                    },
-                });
-                return res.status(200).json(updatedApplication);
-            } else {
-                return res.status(400).json({ error: "You have already applied to this opportunity." });
-            }
+            return res.status(400).json({ error: "You have already applied to this opportunity." });
         }
+
         const applied = await prisma.application.create({
             data: {
                 oppId: oppId,
                 userId: existingUser.id,
-                completed: completed, 
+                completed: false, 
             },
         });
+
         return res.status(201).json(applied);
-        
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Something went wrong. Please try again." });
     }
 });
+
 
 app.get('/applied-opportunities', async (req, res) => {
     const { username } = req.query; 
@@ -559,8 +552,6 @@ app.get('/applied-opportunities', async (req, res) => {
 
 app.post('/application-status', async (req, res) => {
     const { oppId, username, completed } = req.body;
-    console.log(req.body);
-
     try {
         const user = await prisma.user.findUnique({
             where: { username },
@@ -587,11 +578,91 @@ app.post('/application-status', async (req, res) => {
         });
 
         res.status(200).json({ message: "Application status updated" });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Something went wrong." });
     }
 });
+
+
+app.get('/completed-applications', async (req, res) => {
+    const { username } = req.query;
+
+    if (!username) {
+        return res.status(400).json({ error: "Username is required." });
+    }
+
+    try {
+        const existingUser = await findUser(username);
+
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist" });
+        }
+
+        const applications = await prisma.application.findMany({
+            where: {
+                userId: existingUser.id,
+                completed: true, 
+            },
+            include: {
+                opportunity: true, 
+            },
+        });
+
+        const completedOpportunities = applications.map((application) => application.opportunity);
+        
+        if (completedOpportunities.length === 0) {
+            return res.status(200).json({ message: "No completed applications." });
+        }
+        
+        return res.status(200).json(completedOpportunities);
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+});
+
+
+app.get('/inprogress-applications', async (req, res) => {
+    const { username } = req.query;
+
+    if (!username) {
+        return res.status(400).json({ error: "Username is required." });
+    }
+
+    try {
+        const existingUser = await findUser(username);
+
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist" });
+        }
+
+        const applications = await prisma.application.findMany({
+            where: {
+                userId: existingUser.id,
+                completed: false,
+            },
+            include: {
+                opportunity: true,
+            },
+        });
+
+        const inProgressOpportunities = applications.map((application) => application.opportunity);
+
+        if (inProgressOpportunities.length === 0) {
+            return res.status(200).json({ message: "No in-progress applications." });
+        }
+
+        return res.status(200).json(inProgressOpportunities);
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+});
+
 
 
 app.listen(PORT, async () => {
