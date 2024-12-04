@@ -1,0 +1,16 @@
+.completed-container {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.cards-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cards-group .card {
+    width: 100%;
+    max-width: 350px;
+    margin-bottom: 20px;
+}

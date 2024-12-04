@@ -82,16 +82,12 @@ export default function Home() {
             <h3 className='welcome'>Here's what you missed...</h3>
             <div className='cards' style={{ display: 'flex', flexWrap: 'nowrap', gap: '10px', justifyContent: 'flex-start', width: '100%', overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {opps.slice(0, 6) && opps.slice(0, 6).map((item, index) => (
-                    <Card key={index} image={item.companyLogo} text={item.companyName} title={item.title} link={item.jobPosting} oppId={item.id} 
-                    style={{ width: '100px', height: '150px', border: '2px solid #ddd', borderRadius: '10px', padding: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1', backgroundColor: '#fff', transition: 'transform 0.3s ease' }} />
-                ))}
+                    <Card key={index} image={item.companyLogo} text={item.companyName} title={item.title} link={item.jobPosting} oppId={item.id} />))}
             </div>
             <h3 className='welcome'>Continue working on...</h3>
             <div className='cards' style={{ display: 'flex', flexWrap: 'nowrap', gap: '10px', justifyContent: 'flex-start', width: '100%', overflowX: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {data.slice(0, 5) && data.slice(0, 5).map((item, index) => (
-                    <Card key={index} image={item.companyLogo} text={item.companyName} title={item.title} link={item.jobPosting} oppId={item.id}
-                    style={{ width: '100px', height: '150px', border: '2px solid #ddd', borderRadius: '10px', padding: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1', backgroundColor: '#fff', transition: 'transform 0.3s ease' }} />
-                ))} 
+                    <Card key={index} image={item.companyLogo} text={item.companyName} title={item.title} link={item.jobPosting} oppId={item.id} />))} 
             </div>
         </div>
     )
