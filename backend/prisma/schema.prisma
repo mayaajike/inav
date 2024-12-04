@@ -30,17 +30,19 @@ model User {
   isVerified          Boolean    @default(false)
   emailToken          String?
   SavedOpportunities  SavedOpportunity[]
+  Applications        Application[]
 }
 
 model Opportunity{
-  id          String    @id @default(uuid())
-  title       String
-  companyName String
-  companyLogo String
-  jobPosting  String
-  jobType     String
-  location    String
-  savedBy     SavedOpportunity[]
+  id            String    @id @default(uuid())
+  title         String
+  companyName   String
+  companyLogo   String
+  jobPosting    String
+  jobType       String
+  location      String
+  savedBy       SavedOpportunity[]
+  Applications  Application[]
 }
 
 model SavedOpportunity {
@@ -50,4 +52,14 @@ model SavedOpportunity {
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   opportunity Opportunity  @relation(fields: [oppId], references: [id], onDelete: Cascade)
   savedAt     DateTime      @default(now())        
+}
+
+model Application {
+  id            String          @id @default(uuid())
+  oppId         String
+  userId        String 
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity   Opportunity     @relation(fields: [oppId], references: [id], onDelete: Cascade)
+  completed     Boolean
+  createdAt     DateTime        @default(now())
 }

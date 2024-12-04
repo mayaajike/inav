@@ -6,11 +6,15 @@ import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import logo from '../assets/inav logo.png'
 import { FaRegUser } from "react-icons/fa";
+import { useLocation } from 'react-router-dom';
 
 export default function NavBar() {
+  const location = useLocation();
   const handleLogout = () => {
     localStorage.clear();
   }
+
+  const isActive = (path) => location.pathname === path;
 
   return (
       <Navbar expand="lg" className="bg-body-tertiary" data-bs-theme="light">
@@ -21,19 +25,18 @@ export default function NavBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/opportunities">Opportunities</Nav.Link>
+            <Nav.Link href="/opportunities" className={isActive("/opportunities") ? 'active' : ''}>Opportunities</Nav.Link>
             <NavDropdown title="Application Hub" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Pending</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">Completed</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">In Progress</NavDropdown.Item>
+            <NavDropdown.Item href="/saved" className={isActive("/saved") ? 'active' : ''}>Saved</NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.2" className={isActive("#action/3.2") ? 'active' : ''}>Completed</NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.3" className={isActive("#action/3.3") ? 'active' : ''}>In Progress</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="/applications">All Applications</NavDropdown.Item>
+              <NavDropdown.Item href="/applications" className={isActive("/applications") ? 'active' : ''}>All Applications</NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link href="#link">Mentorship Hub</Nav.Link>
           </Nav>
           <Nav className="ms-auto">
               <NavDropdown title={<FaRegUser style={{ width: '25px', height: '25px '}} />} id="user-nav-dropdown">
-                  <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
+                  <NavDropdown.Item href="/profile" className={isActive("/profile") ? 'active' : ''}>Profile</NavDropdown.Item>
                   <NavDropdown.Item href="#settings">Settings</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='/login' onClick={handleLogout}>Logout</NavDropdown.Item>

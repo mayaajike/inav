@@ -299,6 +299,9 @@ app.get('/saved-opportunities', async (req, res) => {
         const savedOpps = await prisma.savedOpportunity.findMany({
             where: {
                 userId: existingUser.id,
+            },
+            include: {
+                opportunity: true,
             }
         });
 
@@ -469,6 +472,127 @@ app.patch('/user-info', upload.fields([{ name: 'profilePic'}, { name: 'resume' }
         return res.status(500).json({ error: "Server error" });
     }
 })
+
+app.post('/apply', async (req, res) => {
+    const { oppId, username, completed } = req.body;
+    try {
+        const existingUser = await findUser(username);
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist" });
+        }
+        const opportunity = await findOpportunity(oppId);
+        if (!opportunity) {
+            return res.status(404).json({ error: "Opportunity does not exist." });
+        }
+
+        const existingApplication = await prisma.application.findFirst({
+            where: {
+                userId: existingUser.id,
+                oppId: oppId,
+            },
+        });
+
+        if (existingApplication) {
+            if (completed === true) {
+                const updatedApplication = await prisma.application.update({
+                    where: {
+                        id: existingApplication.id,
+                    },
+                    data: {
+                        completed: true,
+                    },
+                });
+                return res.status(200).json(updatedApplication);
+            } else {
+                return res.status(400).json({ error: "You have already applied to this opportunity." });
+            }
+        }
+        const applied = await prisma.application.create({
+            data: {
+                oppId: oppId,
+                userId: existingUser.id,
+                completed: completed, 
+            },
+        });
+        return res.status(201).json(applied);
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+});
+
+app.get('/applied-opportunities', async (req, res) => {
+    const { username } = req.query; 
+
+    if (!username) {
+        return res.status(400).json({ error: "Username is required." });
+    }
+
+    try {
+        const existingUser = await findUser(username);
+
+        if (!existingUser) {
+            return res.status(404).json({ error: "User does not exist" });
+        }
+
+        const applications = await prisma.application.findMany({
+            where: {
+                userId: existingUser.id,
+            },
+            include: {
+                opportunity: true,  
+            },
+        });
+
+        const appliedOpportunities = applications.map((application) => application.opportunity);
+        if (appliedOpportunities.length === 0) {
+            return res.status(200).json({ message: "No opportunities applied to." });
+        }
+        return res.status(200).json(appliedOpportunities);
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Something went wrong. Please try again." });
+    }
+});
+
+app.post('/application-status', async (req, res) => {
+    const { oppId, username, completed } = req.body;
+    console.log(req.body);
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { username },
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const application = await prisma.application.findFirst({
+            where: {
+                userId: user.id,
+                oppId: oppId,
+            },
+        });
+
+        if (!application) {
+            return res.status(404).json({ error: "Application not found" });
+        }
+
+        await prisma.application.update({
+            where: { id: application.id },
+            data: { completed: completed },
+        });
+
+        res.status(200).json({ message: "Application status updated" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Something went wrong." });
+    }
+});
+
 
 app.listen(PORT, async () => {
     console.log(`Server is running on http://localhost:${PORT}`);

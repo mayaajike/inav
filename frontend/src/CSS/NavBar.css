@@ -7,3 +7,8 @@
 .tab{
     margin-right: 30px;
 }
+
+.nav-link.active, .dropdown-item.active {
+    font-weight: bold;
+  }
+  
